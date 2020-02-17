@@ -1,0 +1,20 @@
+{
+  "name": "avertem-javascript",
+  "version": "1.0.0",
+  "description": "avertem ws plugin javascript",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify index.js -o bundle.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "avertem-js-utils": "github:avertem/avertem-js-utils",
+    "bip39": "^3.0.2",
+    "browserify": "^16.5.0",
+    "buffer": "^5.4.3",
+    "hdkey": "^1.1.1",
+    "jquery": "^3.4.1"
+  }
+}
