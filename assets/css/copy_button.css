@@ -1,0 +1,12 @@
+.mnemonic_p {
+    background-color: #f0f3f5; padding: 4px; border-radius: 2px;
+}
+
+.mnemonic_p_account {
+    word-break: break-all; background-color: #f0f3f5; padding: 4px; border-radius: 2px;
+}
+
+.mnemonic_btn {
+    width: 100%;
+    text-align:center;
+}
