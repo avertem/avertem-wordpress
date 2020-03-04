@@ -130,7 +130,82 @@ class Avertem_Public {
 
 	}
 
+	function callAPI($method, $url, $data, $options){
+	   $curl = curl_init();
+	   switch ($method){
+	      case "POST":
+	         curl_setopt($curl, CURLOPT_POST, 1);
+	         if ($data)
+	            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+	         break;
+	      case "PUT":
+	         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
+	         if ($data)
+	            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);			 					
+	         break;
+	      default:
+	         if ($data)
+	            $url = sprintf("%s?%s", $url, http_build_query($data));
+	   }
+	   // OPTIONS:
+	   curl_setopt($curl, CURLOPT_URL, $url);
+	   curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+	      'Content-Type: application/json',
+	      'Authorization: Bearer '.$options['bearer_token']
+	   ));
+	   curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+	   //curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+
+	   // EXECUTE:
+	   $result = curl_exec($curl);
+	   if(!$result){die("Connection Failure");}
+	   
+	   curl_close($curl);
+	   return $result;
+	}
+
 	public function handle_registration_hook($user_id) {
+		error_log('Register  the user '.$user_id);
+
+		$user = get_userdata($user_id);
+		$mnemonic_key = json_decode(get_user_meta( $user_id, 'mnemonic', true ));
+
+		//if (get_user_meta( $user_id, 'anonymous', true ) == 'anonymous') {
+		//	$username = $mnemonic_key->mnemonic_account;
+		//	$email = $mnemonic_key->mnemonic_account;
+		//	$email_verified = false;
+		//	$firstname = $mnemonic_key->mnemonic_account;
+		//	$lastname = $mnemonic_key->mnemonic_account;
+		//} else {
+			$username = $user->user_login;
+			$email = $user->user_email;
+			$email_verified = false;
+			$firstname = $user->first_name;
+			$lastname = $user->last_name;
+		//}
+
+		$account_type = 'personal';
+		if (get_user_meta( $user_id, 'business', true ) == 'business') {
+			$account_type = 'business';
+		}
+		
+
+		$data = array(
+		    'account' => $mnemonic_key->mnemonic_account,
+		    'accountKey' => $mnemonic_key->mnemonic_public_key,
+		    'email' => $email,
+		    'email_verified' => $email_verified,
+		    'user' => $username,
+		    'account_type' => $account_type,
+		    'firstname' => $firstname,
+		    'lastname' => $lastname
+		);
+		$payload = json_encode($data);
+		error_log('The payload : '.$payload);
+		$avertem_option = get_option('avertem_option');
+
+		$result = $this->callAPI('POST',$avertem_option['rest_endpoint'],$payload,$avertem_option);
+		error_log('Result : '. $result->created);
 		
 	}
 

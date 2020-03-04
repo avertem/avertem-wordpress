@@ -6,6 +6,8 @@ var HDKey = require('hdkey')
 var sha256 = require('js-sha256').sha256;
 var ClipboardJS = require('clipboard');
 
+let accountHex = null;
+
 function setKey(mnemonicPhrase) {
     let seed = bip39.mnemonicToSeedSync(mnemonicPhrase);
     let seedBuffer = new Buffer(seed)
@@ -17,7 +19,7 @@ function setKey(mnemonicPhrase) {
     // generate the account id as hex from the public key
     var accountHash = sha256.create();
     accountHash.update(node.publicKey);
-    let accountHex = accountHash.hex();
+    accountHex = accountHash.hex().toUpperCase();
 
     // set value
     jQuery('.mnemonic_phrase').attr("data-clipboard-text",mnemonicPhrase);
@@ -31,6 +33,11 @@ function setKey(mnemonicPhrase) {
     
     jQuery('.mnemonic_account_text').html(accountHex);
     jQuery('.mnemonic_account').attr("data-clipboard-text",accountHex);
+
+    // set the username and set to read only
+    jQuery('#user_login').val(accountHex.toLowerCase().substring(0,20));
+    jQuery('#user_login').prop("readonly", true);
+    //jQuery('#user_login').prop("size", 40);
 }
 
 jQuery(document).ready(function() {
@@ -39,6 +46,19 @@ jQuery(document).ready(function() {
     const mnemonic = bip39.generateMnemonic();
     jQuery('.mnemonic').html(mnemonic);
     setKey(mnemonic);
+    
+    jQuery('#anonymous').change(function() {
+        if(this.checked) {
+            jQuery('#user_email').val(accountHex + "@avertem.io");
+            jQuery('#first_name').val(accountHex);
+            jQuery('#last_name').val(accountHex);
+            jQuery('#billing_address_1').val(accountHex);
+            jQuery('#billing_city').val(accountHex);
+            jQuery('#billing_state').val(accountHex);
+            jQuery('#billing_postcode').val(accountHex);
+            jQuery('#billing_country').val(accountHex);
+        }
+    });
 });
 
 

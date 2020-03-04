@@ -136,9 +136,50 @@ class Avertem_Admin {
 		);
 	}
 
+	function sanitize_options($value) {
+		$value = stripslashes($value);
+		$value = filter_var($value, FILTER_SANITIZE_STRING);
+		return $value;
+	}
 
 	public function create_admin_page() {
-
+		if (isset($_POST['avertem_option']) && !empty($_POST['avertem_option'])) {
+			$post = $_POST['avertem_option'];
+			foreach($post as $key=>$value) {
+				$post[$key] = self::sanitize_options($value);
+			}
+			
+			update_option( 'avertem_option', $post);
+		}
+		$avertem_option = get_option( 'avertem_option');
+		?>
+		<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"></link>
+		<br>
+		<br>
+		<div class="container">
+			<div class="row">
+	  			<div class="card col-12">
+						<div class="card-header">
+							<h1 class="display-4">Avertem</h1>
+						</div>
+						<form class="avertem-settings-form" method="post" action="#">
+							<div class="card-body form-group">
+								<label for="avertem_option_rest_endpoint">Rest End Point</label>
+								<input type="text" id="avertem_option_rest_endpoint" name="avertem_option[rest_endpoint]" class="form-control" placeholder="Rest Endpoint" value="<?php echo $avertem_option['rest_endpoint'];?>" >
+							</div>
+							<div class="card-body form-group">
+								<label for="avertem_option_rest_endpoint">Bearer Token</label>
+								<textarea id="avertem_option_bearer_token" name="avertem_option[bearer_token]" class="form-control" placeholder="Bearer Token"><?php echo $avertem_option['bearer_token'];?></textarea>
+							</div>
+							<div class="card-footer text-right">
+									<input type="submit" name="submit" id="submit" class="btn btn-primary btn-lg" value="<?php esc_attr_e('Save', 'avertem');?>">
+							</div>
+						</form>
+					</div>
+			</div>
+		</div>
+		<?
 	}
 
 
