@@ -130,13 +130,45 @@ class Avertem_Public {
 
 	}
 
+	public function handle_rest_api_init() {
+		register_rest_route( 'avertem/v1', '/account/info', array(
+		    'methods' => 'GET',
+		    'callback' => array($this, 'get_account'),
+		  ) );
+
+		register_rest_route( 'avertem/v1', '/account/transactions', array(
+		    'methods' => 'GET',
+		    'callback' => array($this, 'get_transactions'),
+		  ) );
+
+		register_rest_route( 'avertem/v1', '/transaction/send', array(
+		    'methods' => 'POST',
+		    'callback' => array($this, 'send_transaction'),
+		  ) );
+
+		register_rest_route( 'avertem/v1', '/explorer/blocks', array(
+		    'methods' => 'GET',
+		    'callback' => array($this, 'get_blocks'),
+		  ) );
+
+		register_rest_route( 'avertem/v1', '/explorer/producers', array(
+		    'methods' => 'GET',
+		    'callback' => array($this, 'get_producers'),
+		  ) );
+	}
+
+
+
 	function callAPI($method, $url, $data, $options){
+		error_log('The data is : '.strlen($data));
 	   $curl = curl_init();
 	   switch ($method){
 	      case "POST":
-	         curl_setopt($curl, CURLOPT_POST, 1);
-	         if ($data)
+	         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'POST');
+	         if ($data)  {
+	         	//curl_setopt($curl, CURLOPT_POSTFIELDSIZE, strlen($data));
 	            curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+	        }
 	         break;
 	      case "PUT":
 	         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
@@ -149,17 +181,38 @@ class Avertem_Public {
 	   }
 	   // OPTIONS:
 	   curl_setopt($curl, CURLOPT_URL, $url);
-	   curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-	      'Content-Type: application/json',
-	      'Authorization: Bearer '.$options['bearer_token']
-	   ));
+
+	   $headers = array(
+	   	'Authorization: Bearer '.$options['bearer_token']
+	   );
+
+	   if ($data) {
+	   		array_push($headers,'Content-Length: '.strlen($data));
+	   }
+
+	   if (isset($options['headers'])) {
+	   		$header_array = $options['headers'];
+	   		foreach($header_array as $key => $value) {
+	   			error_log('the options are ' .$key.': '.$value);
+	   			array_push($headers,$key.': '.$value);
+	   		}
+	   } else {
+	   		array_push($headers,'Content-Type: application/json');
+	   }
+	   error_log('headers : '.json_encode($headers));
+	   curl_setopt($curl, CURLOPT_HTTPHEADER,$headers);
+
 	   curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+	   curl_setopt($curl, CURLOPT_CONNECTTIMEOUT, 0); 
+	   curl_setopt($curl, CURLOPT_TIMEOUT, 400); //timeout in seconds;
 	   //curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 
 	   // EXECUTE:
 	   $result = curl_exec($curl);
+
 	   if(!$result){die("Connection Failure");}
 	   
+	   //error_log('The result of the call is : '. $result);
 	   curl_close($curl);
 	   return $result;
 	}
@@ -204,7 +257,7 @@ class Avertem_Public {
 		error_log('The payload : '.$payload);
 		$avertem_option = get_option('avertem_option');
 
-		$result = $this->callAPI('POST',$avertem_option['rest_endpoint'],$payload,$avertem_option);
+		$result = $this->callAPI('POST',$avertem_option['rest_endpoint'].'/account/create',$payload,$avertem_option);
 		error_log('Result : '. $result->created);
 		
 	}
@@ -427,5 +480,288 @@ class Avertem_Public {
 		}
 	}
 
+
+	private function read_asset_manifest( $base ) {
+		$asset_manifest = json_decode( file_get_contents( plugin_dir_url( __FILE__ ).$base.'asset-manifest.json' ), true )['entrypoints'];
+		error_log('Asset manifest '.$asset_manifest);
+		foreach ( $asset_manifest as $value ) {
+			error_log('Values '.$value);
+			if (strrpos($value,'.js')) {
+				?>
+				<script src="<?php echo plugin_dir_url( __FILE__ ).$base.$value ?>"> </script>
+				<?php
+			} else if (strrpos($value,'.css')) {
+				?>
+				<link href="<?php echo plugin_dir_url( __FILE__ ).$base.$value ?>" rel="stylesheet">
+				<?php
+			}
+			
+		}	
+	}
+
+	/**
+	 *
+	 */
+	function get_wallet_code() {
+		?>
+		<div id="nonceCreator">
+		  <script>
+		    var _wallet_wpnonce = <?php echo json_encode(wp_create_nonce('wp_rest')); ?>;
+		    var _wallet_cookiesArray = <?php echo json_encode($_COOKIE) ?>;
+		  </script>
+		</div>
+		<div>
+			<div id="avertem_wallet_id"></div>
+        	<?php $this->read_asset_manifest( '/react/wallet/build/' ) ?>
+    	</div>
+		<?php
+	}
+
+	/**
+	 *
+	 */
+	function get_transactions_code() {
+		?>
+		<div id="nonceCreator">
+		  <script>
+		    var _transaction_wpnonce = <?php echo json_encode(wp_create_nonce('wp_rest')); ?>;
+		    var _transaction_cookiesArray = <?php echo json_encode($_COOKIE) ?>;
+		  </script>
+		</div>
+		<div>
+			<div id="avertem_transactions_id"></div>
+			<?php $this->read_asset_manifest( '/react/transactions/build/' ) ?>
+    	</div>
+		<?php
+	}
+
+	/**
+	 *
+	 */
+	function get_send_code() {
+		?>
+		<div id="nonceCreator">
+		  <script>
+		    var _send_wpnonce = <?php echo json_encode(wp_create_nonce('wp_rest')); ?>;
+		    var _send_cookiesArray = <?php echo json_encode($_COOKIE) ?>;
+		  </script>
+		</div>
+		<div>
+			<div id="avertem_send_id"></div>
+			<?php $this->read_asset_manifest( '/react/send/build/' ) ?>
+    	</div>
+		<?php
+	}
+
+	/**
+	 *
+	 */
+	function get_explorer_code() {
+		?>
+		<div>
+			<div id="avertem_explorer_id"></div>
+			<?php $this->read_asset_manifest( '/react/explorer/build/' ) ?>
+    	</div>
+		<?php
+	}
+
+	/**
+	 *
+	 */
+	function get_producer_code() {
+		?>
+		<div>
+			<div id="avertem_producer_id"></div>
+			<?php $this->read_asset_manifest( '/react/producer/build/' ) ?>
+    	</div>
+		<?php
+	}
+
+	/**
+	 *
+	 */
+	function get_buy_code() {
+		?>
+      	<div>
+      		Buy
+      	</div>
+        <?php
+	}
+
+	/**
+	 *
+	 */
+	function get_contract_code() {
+		?>
+		<div id="nonceCreator">
+		  <script>
+		    var _contract_wpnonce = <?php echo json_encode(wp_create_nonce('wp_rest')); ?>;
+		    var _contract_cookiesArray = <?php echo json_encode($_COOKIE) ?>;
+		  </script>
+		</div>
+		<div>
+			<div id="avertem_contract_id"></div>
+			<?php $this->read_asset_manifest( '/react/contract/build/' ) ?>
+    	</div>
+		<?php
+	}
+
+	/**
+	 *
+	 */
+	function get_tools_code() {
+		
+		$user = wp_get_current_user();
+		$mnemonic_key = json_decode(get_user_meta( $user->ID, 'mnemonic', true ));
+		?>
+		<div>
+			<div id="avertem_tools_id"></div>
+			<link href="https://unpkg.com/@triply/yasgui/build/yasgui.min.css" rel="stylesheet" type="text/css" />
+  			<script src="https://unpkg.com/@triply/yasgui/build/yasgui.min.js"></script>
+  			<script>
+  				const yasgui = new Yasgui(document.getElementById("avertem_tools_id"), {
+					  requestConfig: { endpoint: "/sparql" },
+					  copyEndpointOnNewTab: false  
+				});
+  			</script>
+    	</div>
+		<?php
+	}
+
+
+	//
+	// Rest API
+	//
+
+	private function get_user_account($user) {
+		return json_decode($user->get('mnemonic'));
+	}
+
+	private function get_id_token($user) {
+		return json_decode($user->get( 'openid-connect-generic-last-user-claim' ));
+	}
+
+	private function avertem_authenticate($mnemonic_key,$id_token,$avertem_option) {
+		return $this->callAPI('GET',$avertem_option['rest_endpoint'].
+			'/query/authenticate/'.$mnemonic_key->mnemonic_account.'/'.$id_token->hash_hex.'/'.
+			$id_token->signature_hex,NULL,$avertem_option);
+	}
+
+	public function get_account($request) {
+		//if ( ! current_user_can( 'read' ) ) {
+        //    return new WP_Error( 'rest_forbidden', esc_html__( 'You cannot view the post resource.' ), array( 'status' => '403' ) );
+        //}
+
+        
+        $user = wp_get_current_user();
+        $mnemonic_key = $this->get_user_account($user);
+        $id_token = $this->get_id_token($user);
+
+        error_log('##############################################');
+        error_log('#####################claim ['.json_encode($id_token).']');
+        error_log('##############################################');
+        if (!$id_token) {
+        	error_log('Token is not valid for the user ['.$id_token.']');
+        	return new WP_Error( 'rest_forbidden', esc_html__( 'No user token.' ), array( 'status' => '403' ) );
+        }
+        $avertem_option = get_option('avertem_option');
+		
+
+
+        $avertem_session = json_decode($this->avertem_authenticate($mnemonic_key,$id_token,$avertem_option));
+        error_log('The session : '.json_encode($avertem_session));
+        
+
+        $result = $this->callAPI('GET',$avertem_option['rest_endpoint'].'/query/contract/cors/session_id'.$avertem_session->session.'/E181F4277D8463C43039D5DCFE3DC79CE6D444162866287BBE3990421EEEC5CC/account_total',NULL,$avertem_option);
+		error_log('####################### Result : '. $result);
+
+		wp_send_json($result);
+	}
+
+	public function get_transactions($request) {
+		//if ( ! current_user_can( 'read' ) ) {
+        //    return new WP_Error( 'rest_forbidden', esc_html__( 'You cannot view the post resource.' ), array( 'status' => '403' ) );
+        //}
+
+        
+        $user = wp_get_current_user();
+        $mnemonic_key = $this->get_user_account($user);
+        $id_token = $this->get_id_token($user);
+        if (!$id_token) {
+        	error_log('Token is not valid for the user ['.$id_token.']');
+        	return new WP_Error( 'rest_forbidden', esc_html__( 'No user token.' ), array( 'status' => '403' ) );
+        }
+        
+        $avertem_option = get_option('avertem_option');
+
+
+        $avertem_session = json_decode($this->avertem_authenticate($mnemonic_key,$id_token,$avertem_option));
+        error_log('The session : '.$avertem_session->session);
+
+        $result = $this->callAPI('GET',$avertem_option['rest_endpoint'].'/query/contract/cors/session_id'.$avertem_session->session.'/E181F4277D8463C43039D5DCFE3DC79CE6D444162866287BBE3990421EEEC5CC/transactions',NULL,$avertem_option);
+		error_log('###################### Result : '. $result);
+
+		wp_send_json($result);
+	}
+
+	public function send_transaction($request) {
+		//if ( ! current_user_can( 'read' ) ) {
+        //    return new WP_Error( 'rest_forbidden', esc_html__( 'You cannot view the post resource.' ), array( 'status' => '403' ) );
+        //}
+
+        
+        $user = wp_get_current_user();
+        $mnemonic_key = $this->get_user_account($user);
+        $id_token = $this->get_id_token($user);
+        if (!$id_token) {
+        	error_log('Token is not valid for the user ['.$id_token.']');
+        	return new WP_Error( 'rest_forbidden', esc_html__( 'No user token.' ), array( 'status' => '403' ) );
+        }
+        
+        $avertem_option = get_option('avertem_option');
+
+        $avertem_session =json_decode($this->avertem_authenticate($mnemonic_key,$id_token,$avertem_option));
+        error_log('The session : '.json_encode($avertem_session));
+
+        $avertem_option['headers'] = array(
+        	'Content-Type'=>'application/protobuf',
+        	'session_hash'=>$avertem_session->session
+        );
+
+        $result = $this->callAPI('POST',$avertem_option['rest_endpoint'].'/query/transaction/'.$avertem_session->session,$request->get_body(),$avertem_option);
+		error_log('Result : '. $result);
+
+		wp_send_json($result);
+	}
+
+
+	public function get_blocks($request) {
+		
+		//$data = array();
+		//$payload = json_encode($data);
+		//error_log('The payload : '.$payload);
+		$avertem_option = get_option('avertem_option');
+
+		$result = $this->callAPI('GET',$avertem_option['rest_endpoint'].'/explorer/blocks',NULL,$avertem_option);
+		error_log('Result : '. $result);
+
+		wp_send_json($result);
+
+
+	}
+
+	public function get_producers($request) {
+		
+		//$data = array();
+		//$payload = json_encode($data);
+		//error_log('The payload : '.$payload);
+		$avertem_option = get_option('avertem_option');
+
+		$result = $this->callAPI('GET',$avertem_option['rest_endpoint'].'/explorer/producer',NULL,$avertem_option);
+		error_log('Result : '. $result);
+
+		wp_send_json($result);
+
+	}
 
 }

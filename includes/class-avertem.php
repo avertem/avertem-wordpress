@@ -178,6 +178,7 @@ class Avertem {
 		// alter the login form as dictated by settings
 		$this->loader->add_filter( 'login_message', $plugin_public, 'handle_login_message' );
 		$this->loader->add_filter( 'register_form', $plugin_public, 'handle_registration_form' );
+		$this->loader->add_filter( 'rest_api_init', $plugin_public, 'handle_rest_api_init' );
 
 
 		$this->loader->add_action( 'plugins_loaded', $plugin_public, 'textdomain' );
@@ -187,6 +188,16 @@ class Avertem {
 
       	// hook into the registration action
       	$this->loader->add_action( 'user_register', $plugin_public, 'handle_registration_hook' );
+
+      	// add the short codes
+      	add_shortcode( 'avertem_shortcode_wallet', array( $plugin_public, 'get_wallet_code' ) );
+      	add_shortcode( 'avertem_shortcode_transactions', array( $plugin_public, 'get_transactions_code' ) );
+      	add_shortcode( 'avertem_shortcode_send', array( $plugin_public, 'get_send_code' ) );
+      	add_shortcode( 'avertem_shortcode_explorer', array( $plugin_public, 'get_explorer_code' ) );
+      	add_shortcode( 'avertem_shortcode_producer', array( $plugin_public, 'get_producer_code' ) );
+      	//add_shortcode( 'avertem_shortcode_buy', array( $plugin_public, 'get_buy_code' ) );
+      	add_shortcode( 'avertem_shortcode_contract', array( $plugin_public, 'get_contract_code' ) );
+      	add_shortcode( 'avertem_shortcode_tools', array( $plugin_public, 'get_tools_code' ) );
 
 	}
 
