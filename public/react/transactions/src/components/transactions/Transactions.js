@@ -84,11 +84,6 @@ class Transactions extends Component {
         sortable: true
       },
       {
-        name: 'Account',
-        selector: 'account',
-        sortable: true,
-      },
-      {
         name: 'Date',
         selector: 'date',
         sortable: true,
@@ -103,6 +98,12 @@ class Transactions extends Component {
       {
         name: 'Name',
         selector: 'name',
+        sortable: true,
+        right: true,
+      },
+      {
+        name: 'Description',
+        selector: 'description',
         sortable: true,
         right: true,
       },

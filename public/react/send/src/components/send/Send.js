@@ -36,7 +36,8 @@ import {Typeahead} from 'react-bootstrap-typeahead';
 
 import { AvertemTransaction, AvertemKey } from 'avertem-js-utils';
 import { AccountContext } from '../../context/AccountContext';
-import { TransactionContext } from '../../context/TransactionContext';
+
+let vm = null;
 
 class Account extends Component {
 
@@ -44,7 +45,7 @@ class Account extends Component {
 
     constructor(props) {
         super(props);
-
+        vm = this;
         
         this.state = {
             balance: 0,
@@ -56,6 +57,7 @@ class Account extends Component {
             send_info: {
                 amount: 0,
                 mnemonic: '',
+                account: ''
             },
             request_info: {
 
@@ -68,13 +70,13 @@ class Account extends Component {
                 transactionHash: '',
                 transactionValue: 0,
                 error: ''
-            },
-            selected: []
+            }
         };
 
         this.handleSendAmountChange = this.handleSendAmountChange.bind(this);
         this.handleMnemonicChange = this.handleMnemonicChange.bind(this);
         this.sendTokens = this.sendTokens.bind(this);
+        this.handleOnChange = this.handleOnChange.bind(this);
     }
 
     toggle = modalType => () => {
@@ -105,12 +107,13 @@ class Account extends Component {
         event.preventDefault();
         let transaction = new AvertemTransaction(new AvertemKey(this.state.send_info.mnemonic),
             this.state.send_info.amount,this.context.accountDetails.account,this.context.accountDetails.account,
-            this.state.selected[0])
+            this.state.send_info.account);
         let vm = this;
         this.setState({
             modal_confirm: false,
             modal_request: true,
-            modal_complete: false
+            modal_complete: false,
+            
         });
         
         fetch(`/wp-json/avertem/v1/transaction/send`, {
@@ -142,8 +145,12 @@ class Account extends Component {
         })
       }
     
-    
-    
+    handleOnChange(event) {
+        let send_info = this.state.send_info;
+        send_info.account = event.target.value
+        this.setState({ send_info: send_info});
+    }
+
     render() {
         const { selected } = this.state;
 
@@ -151,31 +158,19 @@ class Account extends Component {
             <Form>
                 <Card>
                     <CardBody>
-                        <TransactionContext.Consumer>
-                            { (transactions) => {
-                                let transactionList = [];
-                                console.log("The retrieve transactions [%o]",transactions);
-                                if (transactions.transactions.length) {
-                                    transactionList = transactions.transactions.map( (transaction) => {return transaction.account} );
-                                }
-                                console.log("Transaction list [%o]",transactionList);
-                                return (
-                                    <FormGroup>
-                        
-                                        <Label for="sendAccountNumber">Target Account Number</Label>
-                                        <Typeahead
-                                            allowNew
-                                            id="sendAccountNumber"
-                                            newSelectionPrefix="Enter new account : "
-                                            options={ transactionList }
-                                            placeholder="Account Number"
-                                            onChange={(s) => this.setState({ selected: s })}
-                                        />
-                                    </FormGroup>
-                        
-                                )}
-                            } 
-                        </TransactionContext.Consumer>                          
+                        <FormGroup>
+            
+                            <Label for="sendAccountNumber">Target Account Number</Label>
+                            <Input
+                                type="text"
+                                name="sendAccountNumber"
+                                id="sendAccountNumber"
+                                placeholder="Account Number"
+                                required={true}
+                                onChange={this.handleOnChange}
+                                value={this.state.send_info.account}
+                            />
+                        </FormGroup>
                         <FormGroup>
                             <Label for="sendAmount">Number({ this.context.accountDetails.total })</Label>
                             <InputGroup>
