@@ -7,12 +7,18 @@ import {
 } from 'reactstrap';
 
 import {Contract} from './components';
+import {AccountSession} from './services/AccountSession';
+import {NamespacesSession} from './services/NamespacesSession';
 
 function App() {  
   return (
-    <Container>
-      <Contract></Contract>
-    </Container>
+    <AccountSession>
+      <NamespacesSession>
+        <Container>
+          <Contract></Contract>
+        </Container>
+      </NamespacesSession>
+    </AccountSession>
   );
 }
 

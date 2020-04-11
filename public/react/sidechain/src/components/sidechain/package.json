@@ -1,0 +1,6 @@
+{
+  "name": "Sidechain",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./Sidechain.js"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "SidechainErrors",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./SidechainErrors.js"
+}

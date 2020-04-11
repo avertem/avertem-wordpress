@@ -195,8 +195,21 @@ class Avertem {
       	add_shortcode( 'avertem_shortcode_send', array( $plugin_public, 'get_send_code' ) );
       	add_shortcode( 'avertem_shortcode_explorer', array( $plugin_public, 'get_explorer_code' ) );
       	add_shortcode( 'avertem_shortcode_producer', array( $plugin_public, 'get_producer_code' ) );
+
       	//add_shortcode( 'avertem_shortcode_buy', array( $plugin_public, 'get_buy_code' ) );
       	add_shortcode( 'avertem_shortcode_contract', array( $plugin_public, 'get_contract_code' ) );
+      	add_shortcode( 'avertem_shortcode_contracts', array( $plugin_public, 'get_contracts_code' ) );
+      	add_shortcode( 'avertem_shortcode_contract_errors', array( $plugin_public, 'get_contract_errors_code' ) );
+      	
+      	add_shortcode( 'avertem_shortcode_namespace', array( $plugin_public, 'get_namespace_code' ) );
+      	add_shortcode( 'avertem_shortcode_namespaces', array( $plugin_public, 'get_namespaces_code' ) );
+      	add_shortcode( 'avertem_shortcode_namespace_errors', array( $plugin_public, 'get_namespace_errors_code' ) );
+
+      	add_shortcode( 'avertem_shortcode_sidechain', array( $plugin_public, 'get_sidechain_code' ) );
+      	add_shortcode( 'avertem_shortcode_sidechains', array( $plugin_public, 'get_sidechains_code' ) );
+      	add_shortcode( 'avertem_shortcode_sidechain_errors', array( $plugin_public, 'get_sidechain_errors_code' ) );
+      	
+      	
       	add_shortcode( 'avertem_shortcode_tools', array( $plugin_public, 'get_tools_code' ) );
 
 	}

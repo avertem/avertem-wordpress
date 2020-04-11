@@ -155,6 +155,37 @@ class Avertem_Public {
 		    'methods' => 'GET',
 		    'callback' => array($this, 'get_producers'),
 		  ) );
+
+		register_rest_route( 'avertem/v1', '/namespace/namespaces', array(
+		    'methods' => 'GET',
+		    'callback' => array($this, 'get_namespaces'),
+		  ) );
+
+		register_rest_route( 'avertem/v1', '/namespace/namespace_errors', array(
+		    'methods' => 'GET',
+		    'callback' => array($this, 'get_namespace_errors'),
+		  ) );
+
+		register_rest_route( 'avertem/v1', '/contract/contracts', array(
+		    'methods' => 'GET',
+		    'callback' => array($this, 'get_contracts'),
+		  ) );
+
+		register_rest_route( 'avertem/v1', '/contract/contract_errors', array(
+		    'methods' => 'GET',
+		    'callback' => array($this, 'get_contract_errors'),
+		  ) );
+
+		register_rest_route( 'avertem/v1', '/sidechain/sidechains', array(
+		    'methods' => 'GET',
+		    'callback' => array($this, 'get_sidechains'),
+		  ) );
+
+		register_rest_route( 'avertem/v1', '/sidechain/sidechain_errors', array(
+		    'methods' => 'GET',
+		    'callback' => array($this, 'get_sidechain_errors'),
+		  ) );	
+
 	}
 
 
@@ -589,7 +620,7 @@ class Avertem_Public {
 	}
 
 	/**
-	 *
+	 * contract 
 	 */
 	function get_contract_code() {
 		?>
@@ -602,6 +633,152 @@ class Avertem_Public {
 		<div>
 			<div id="avertem_contract_id"></div>
 			<?php $this->read_asset_manifest( '/react/contract/build/' ) ?>
+    	</div>
+		<?php
+	}
+
+
+	/**
+	 *
+	 */
+	function get_contracts_code() {
+		?>
+		<div id="nonceCreator">
+		  <script>
+		    var _contracts_wpnonce = <?php echo json_encode(wp_create_nonce('wp_rest')); ?>;
+		    var _contracts_cookiesArray = <?php echo json_encode($_COOKIE) ?>;
+		  </script>
+		</div>
+		<div>
+			<div id="avertem_contracts_id"></div>
+			<?php $this->read_asset_manifest( '/react/contracts/build/' ) ?>
+    	</div>
+		<?php
+	}
+
+	/**
+	 *
+	 */
+	function get_contract_errors_code() {
+		?>
+		<div id="nonceCreator">
+		  <script>
+		    var _contract_errors_wpnonce = <?php echo json_encode(wp_create_nonce('wp_rest')); ?>;
+		    var _contract_errors_cookiesArray = <?php echo json_encode($_COOKIE) ?>;
+		  </script>
+		</div>
+		<div>
+			<div id="avertem_contract_errors_id"></div>
+			<?php $this->read_asset_manifest( '/react/contract_errors/build/' ) ?>
+    	</div>
+		<?php
+	}
+
+	/**
+	 *
+	 */
+	function get_namespace_code() {
+		?>
+		<div id="nonceCreator">
+		  <script>
+		    var _namespace_wpnonce = <?php echo json_encode(wp_create_nonce('wp_rest')); ?>;
+		    var _namespace_cookiesArray = <?php echo json_encode($_COOKIE) ?>;
+		  </script>
+		</div>
+		<div>
+			<div id="avertem_namespace_id"></div>
+			<?php $this->read_asset_manifest( '/react/namespace/build/' ) ?>
+    	</div>
+		<?php
+	}
+
+
+	/**
+	 *
+	 */
+	function get_namespaces_code() {
+		?>
+		<div id="nonceCreator">
+		  <script>
+		    var _namespaces_wpnonce = <?php echo json_encode(wp_create_nonce('wp_rest')); ?>;
+		    var _namespaces_cookiesArray = <?php echo json_encode($_COOKIE) ?>;
+		  </script>
+		</div>
+		<div>
+			<div id="avertem_namespaces_id"></div>
+			<?php $this->read_asset_manifest( '/react/namespaces/build/' ) ?>
+    	</div>
+		<?php
+	}
+
+	/**
+	 *
+	 */
+	function get_namespace_errors_code() {
+		?>
+		<div id="nonceCreator">
+		  <script>
+		    var _namespace_errors_wpnonce = <?php echo json_encode(wp_create_nonce('wp_rest')); ?>;
+		    var _namespace_errors_cookiesArray = <?php echo json_encode($_COOKIE) ?>;
+		  </script>
+		</div>
+		<div>
+			<div id="avertem_namespace_errors_id"></div>
+			<?php $this->read_asset_manifest( '/react/namespace_errors/build/' ) ?>
+    	</div>
+		<?php
+	}
+
+	/**
+	 *
+	 */
+	function get_sidechain_code() {
+		?>
+		<div id="nonceCreator">
+		  <script>
+		    var _sidechain_wpnonce = <?php echo json_encode(wp_create_nonce('wp_rest')); ?>;
+		    var _sidechain_cookiesArray = <?php echo json_encode($_COOKIE) ?>;
+		  </script>
+		</div>
+		<div>
+			<div id="avertem_sidechain_id"></div>
+			<?php $this->read_asset_manifest( '/react/sidechain/build/' ) ?>
+    	</div>
+		<?php
+	}
+
+	/**
+	 *
+	 */
+	function get_sidechains_code() {
+		?>
+		<div id="nonceCreator">
+		  <script>
+		    var _sidechains_wpnonce = <?php echo json_encode(wp_create_nonce('wp_rest')); ?>;
+		    var _sidechains_cookiesArray = <?php echo json_encode($_COOKIE) ?>;
+		  </script>
+		</div>
+		<div>
+			<div id="avertem_sidechains_id"></div>
+			<?php $this->read_asset_manifest( '/react/sidechains/build/' ) ?>
+    	</div>
+		<?php
+	}
+
+	/**
+	 *
+	 */
+	function get_sidechain_errors_code() {
+		?>
+		<div id="nonceCreator">
+		  <script>
+		    var _sidechain_errors_wpnonce = <?php echo json_encode(wp_create_nonce('wp_rest')); ?>;
+		    var _sidechain_errors_cookiesArray = <?php echo json_encode($_COOKIE) ?>;
+		  </script>
+		</div>
+		<div>
+			<div id="avertem_sidechain_errors_id"></div>
+			<?php $this->read_asset_manifest( '/react/sidechain_errors/build/' ) ?>
     	</div>
 		<?php
 	}
@@ -764,4 +941,167 @@ class Avertem_Public {
 
 	}
 
+
+	// namespace methods
+
+	public function get_namespaces($request) {
+		//if ( ! current_user_can( 'read' ) ) {
+        //    return new WP_Error( 'rest_forbidden', esc_html__( 'You cannot view the post resource.' ), array( 'status' => '403' ) );
+        //}
+
+        
+        $user = wp_get_current_user();
+        $mnemonic_key = $this->get_user_account($user);
+        $id_token = $this->get_id_token($user);
+        if (!$id_token) {
+        	error_log('Token is not valid for the user ['.$id_token.']');
+        	return new WP_Error( 'rest_forbidden', esc_html__( 'No user token.' ), array( 'status' => '403' ) );
+        }
+        
+        $avertem_option = get_option('avertem_option');
+
+
+        $avertem_session = json_decode($this->avertem_authenticate($mnemonic_key,$id_token,$avertem_option));
+        error_log('The session : '.$avertem_session->session);
+
+        $result = $this->callAPI('GET',$avertem_option['rest_endpoint'].'/query/contract/cors/session_id'.$avertem_session->session.'/9B37273E25CA8476B2B78FDC6305579BDF046547B354C8EBB1D2C29ECF02795E/namespaces',NULL,$avertem_option);
+		error_log('###################### Result : '. $result);
+
+		wp_send_json($result);
+	}
+
+	public function get_namespace_errors($request) {
+		//if ( ! current_user_can( 'read' ) ) {
+        //    return new WP_Error( 'rest_forbidden', esc_html__( 'You cannot view the post resource.' ), array( 'status' => '403' ) );
+        //}
+
+        
+        $user = wp_get_current_user();
+        $mnemonic_key = $this->get_user_account($user);
+        $id_token = $this->get_id_token($user);
+        if (!$id_token) {
+        	error_log('Token is not valid for the user ['.$id_token.']');
+        	return new WP_Error( 'rest_forbidden', esc_html__( 'No user token.' ), array( 'status' => '403' ) );
+        }
+        
+        $avertem_option = get_option('avertem_option');
+
+
+        $avertem_session = json_decode($this->avertem_authenticate($mnemonic_key,$id_token,$avertem_option));
+        error_log('The session : '.$avertem_session->session);
+
+        $result = $this->callAPI('GET',$avertem_option['rest_endpoint'].'/query/contract/cors/session_id'.$avertem_session->session.'/9B37273E25CA8476B2B78FDC6305579BDF046547B354C8EBB1D2C29ECF02795E/namespace_errors',NULL,$avertem_option);
+		error_log('###################### Result : '. $result);
+
+		wp_send_json($result);
+	}
+
+	// contract management methods
+
+	public function get_contracts($request) {
+		//if ( ! current_user_can( 'read' ) ) {
+        //    return new WP_Error( 'rest_forbidden', esc_html__( 'You cannot view the post resource.' ), array( 'status' => '403' ) );
+        //}
+
+        
+        $user = wp_get_current_user();
+        $mnemonic_key = $this->get_user_account($user);
+        $id_token = $this->get_id_token($user);
+        if (!$id_token) {
+        	error_log('Token is not valid for the user ['.$id_token.']');
+        	return new WP_Error( 'rest_forbidden', esc_html__( 'No user token.' ), array( 'status' => '403' ) );
+        }
+        
+        $avertem_option = get_option('avertem_option');
+
+
+        $avertem_session = json_decode($this->avertem_authenticate($mnemonic_key,$id_token,$avertem_option));
+        error_log('The session : '.$avertem_session->session);
+
+        $result = $this->callAPI('GET',$avertem_option['rest_endpoint'].'/query/contract/cors/session_id'.$avertem_session->session.'/5C301417C4DC9480205383172A36F3B62349B2C46166D5EE2C5C030FAD41EE45/contracts',NULL,$avertem_option);
+		error_log('###################### Result : '. $result);
+
+		wp_send_json($result);
+	}
+
+	public function get_contract_errors($request) {
+		//if ( ! current_user_can( 'read' ) ) {
+        //    return new WP_Error( 'rest_forbidden', esc_html__( 'You cannot view the post resource.' ), array( 'status' => '403' ) );
+        //}
+
+        
+        $user = wp_get_current_user();
+        $mnemonic_key = $this->get_user_account($user);
+        $id_token = $this->get_id_token($user);
+        if (!$id_token) {
+        	error_log('Token is not valid for the user ['.$id_token.']');
+        	return new WP_Error( 'rest_forbidden', esc_html__( 'No user token.' ), array( 'status' => '403' ) );
+        }
+        
+        $avertem_option = get_option('avertem_option');
+
+
+        $avertem_session = json_decode($this->avertem_authenticate($mnemonic_key,$id_token,$avertem_option));
+        error_log('The session : '.$avertem_session->session);
+
+        $result = $this->callAPI('GET',$avertem_option['rest_endpoint'].'/query/contract/cors/session_id'.$avertem_session->session.'/5C301417C4DC9480205383172A36F3B62349B2C46166D5EE2C5C030FAD41EE45/contract_errors',NULL,$avertem_option);
+		error_log('###################### Result : '. $result);
+
+		wp_send_json($result);
+	}
+
+
+	// 
+
+	public function get_sidechains($request) {
+		//if ( ! current_user_can( 'read' ) ) {
+        //    return new WP_Error( 'rest_forbidden', esc_html__( 'You cannot view the post resource.' ), array( 'status' => '403' ) );
+        //}
+
+        
+        $user = wp_get_current_user();
+        $mnemonic_key = $this->get_user_account($user);
+        $id_token = $this->get_id_token($user);
+        if (!$id_token) {
+        	error_log('Token is not valid for the user ['.$id_token.']');
+        	return new WP_Error( 'rest_forbidden', esc_html__( 'No user token.' ), array( 'status' => '403' ) );
+        }
+        
+        $avertem_option = get_option('avertem_option');
+
+
+        $avertem_session = json_decode($this->avertem_authenticate($mnemonic_key,$id_token,$avertem_option));
+        error_log('The session : '.$avertem_session->session);
+
+        $result = $this->callAPI('GET',$avertem_option['rest_endpoint'].'/query/contract/cors/session_id'.$avertem_session->session.'/BC43DA695277D088BDEC03CE1DC58549651B5F3228F62AEEA7EEA7EDD2E2D221/sidechains',NULL,$avertem_option);
+		error_log('###################### Result : '. $result);
+
+		wp_send_json($result);
+	}
+
+	public function get_sidechain_errors($request) {
+		//if ( ! current_user_can( 'read' ) ) {
+        //    return new WP_Error( 'rest_forbidden', esc_html__( 'You cannot view the post resource.' ), array( 'status' => '403' ) );
+        //}
+
+        
+        $user = wp_get_current_user();
+        $mnemonic_key = $this->get_user_account($user);
+        $id_token = $this->get_id_token($user);
+        if (!$id_token) {
+        	error_log('Token is not valid for the user ['.$id_token.']');
+        	return new WP_Error( 'rest_forbidden', esc_html__( 'No user token.' ), array( 'status' => '403' ) );
+        }
+        
+        $avertem_option = get_option('avertem_option');
+
+
+        $avertem_session = json_decode($this->avertem_authenticate($mnemonic_key,$id_token,$avertem_option));
+        error_log('The session : '.$avertem_session->session);
+
+        $result = $this->callAPI('GET',$avertem_option['rest_endpoint'].'/query/contract/cors/session_id'.$avertem_session->session.'/BC43DA695277D088BDEC03CE1DC58549651B5F3228F62AEEA7EEA7EDD2E2D221/sidechain_errors',NULL,$avertem_option);
+		error_log('###################### Result : '. $result);
+
+		wp_send_json($result);
+	}
 }
